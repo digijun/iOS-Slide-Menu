@@ -44,13 +44,16 @@ typedef  enum{
 @protocol SlideNavigationContorllerAnimator;
 @interface SlideNavigationController : UINavigationController <UINavigationControllerDelegate>
 
-extern NSString * const SlideNavigationControllerDidOpen;
+extern NSString  *const SlideNavigationControllerWillOpen;
+extern NSString  *const SlideNavigationControllerDidOpen;
+extern NSString  *const SlideNavigationControllerWillClose;
 extern NSString  *const SlideNavigationControllerDidClose;
 extern NSString  *const SlideNavigationControllerDidReveal;
 
 @property (nonatomic, assign) BOOL avoidSwitchingToSameClassViewController;
 @property (nonatomic, assign) BOOL enableSwipeGesture;
 @property (nonatomic, assign) BOOL enableShadow;
+@property (nonatomic, strong) UIColor *shadowColor;
 @property (nonatomic, strong) UIViewController *rightMenu;
 @property (nonatomic, strong) UIViewController *leftMenu;
 @property (nonatomic, strong) UIBarButtonItem *leftBarButtonItem;

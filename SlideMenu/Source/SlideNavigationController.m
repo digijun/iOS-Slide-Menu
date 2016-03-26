@@ -43,8 +43,10 @@ typedef enum {
 
 @implementation SlideNavigationController
 
-NSString * const SlideNavigationControllerDidOpen = @"SlideNavigationControllerDidOpen";
-NSString * const SlideNavigationControllerDidClose = @"SlideNavigationControllerDidClose";
+NSString  *const SlideNavigationControllerWillOpen = @"SlideNavigationControllerWillOpen";
+NSString  *const SlideNavigationControllerDidOpen = @"SlideNavigationControllerDidOpen";
+NSString  *const SlideNavigationControllerWillClose = @"SlideNavigationControllerWillClose";
+NSString  *const SlideNavigationControllerDidClose = @"SlideNavigationControllerDidClose";
 NSString  *const SlideNavigationControllerDidReveal = @"SlideNavigationControllerDidReveal";
 
 #define MENU_SLIDE_ANIMATION_DURATION .3
@@ -323,13 +325,21 @@ static SlideNavigationController *singletonInstance;
 	return (self.horizontalLocation == 0) ? NO : YES;
 }
 
+- (void)setShadowColor:(UIColor *)shadowColor
+{
+    _shadowColor = shadowColor;
+    if(_enableShadow) {
+        self.view.layer.shadowColor = shadowColor.CGColor;
+    }
+}
+
 - (void)setEnableShadow:(BOOL)enable
 {
 	_enableShadow = enable;
 	
 	if (enable)
 	{
-		self.view.layer.shadowColor = [UIColor darkGrayColor].CGColor;
+        self.view.layer.shadowColor = (_shadowColor)? _shadowColor.CGColor : [UIColor darkGrayColor].CGColor;
 		self.view.layer.shadowRadius = MENU_SHADOW_RADIUS;
 		self.view.layer.shadowOpacity = MENU_SHADOW_OPACITY;
 		self.view.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.view.bounds].CGPath;
@@ -474,6 +484,7 @@ static SlideNavigationController *singletonInstance;
 
 - (void)openMenu:(Menu)menu withDuration:(float)duration andCompletion:(void (^)())completion
 {
+    [self postNotificationWithName:SlideNavigationControllerWillOpen forMenu:menu];
 	[self enableTapGestureToCloseMenu:YES];
 
 	[self prepareMenuForReveal:menu];
@@ -500,6 +511,7 @@ static SlideNavigationController *singletonInstance;
 	[self enableTapGestureToCloseMenu:NO];
     
      Menu menu = (self.horizontalLocation > 0) ? MenuLeft : MenuRight;
+    [self postNotificationWithName:SlideNavigationControllerWillClose forMenu:menu];
 	
 	[UIView animateWithDuration:duration
 						  delay:0
